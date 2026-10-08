@@ -52,6 +52,19 @@ Keep the distribution config in the device tree (`kconfigs/`) when the
 fork does not ship what you need, so that it can be reviewed and
 updated with the kernel.
 
+## Finding what the device needs
+
+The generic recommendation and tips are in the common
+[kernel choice page](../../common/docs/KERNEL_CHOICE.md). Qualcomm
+specifics on top of them:
+
+| Case | Note |
+|------|------|
+| Sound card does not probe | It needs the ADSP remoteproc running first, see [REMOTEPROCS.md](REMOTEPROCS.md), and the DSP firmware, see [FIRMWARE.md](FIRMWARE.md). The sound card driver alone is not enough |
+| Hardware that sits behind a remote processor (modem, sensors, camera helpers) | Check its remoteproc and the firmware before the driver |
+| Config entries for a new SoC | Take the `compatible` strings from the SoC and board `.dts`, then find the matching drivers under `drivers/` |
+| Upstream is slow for the SoC | Some patches will never go upstream. Keep them in the community fork, not in the device tree |
+
 ## Modules
 
 Qualcomm devices load many modules (clocks, interconnect, regulators,
