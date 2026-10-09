@@ -14,7 +14,7 @@ the downstream vendor tree.
 | Gallium driver | `freedreno` (`BOARD_MESA3D_GALLIUM_DRIVERS`) |
 | Vulkan | `freedreno` Vulkan (`BOARD_MESA3D_VULKAN_DRIVERS`), **not** for legacy families |
 | minigbm platform | `msm` |
-| `ro.opengles.version` | Set in `soc/<family>/product.mk` when `TARGET_GRAPHICS` is `mesa` |
+| `ro.opengles.version` | Set in `soc/<family>/product.mk` when `TARGET_GRAPHICS` is `mesa`. Legacy families get it from `msm_drm_quirks` instead |
 | Display and allocator HALs | The common options; see the common [optional modules](../../common/docs/CHOOSING_OPTIONAL_MODULES.md) |
 
 ### Why no Vulkan on legacy families
@@ -38,17 +38,18 @@ The zap file goes where the device DTS `firmware-name` says. See
 ## `msm_drm_quirks`
 
 A small service for legacy families (`services/msm_drm_quirks`). It
-reads the GPU id through `libdrm_freedreno` and sets the workaround
-properties that Mesa and minigbm need.
+reads the GPU id through `libdrm_freedreno` and sets the OpenGL ES
+version and the workaround properties that Mesa and minigbm need.
 
 | Step | What |
 |------|------|
 | 1 | At `init`, the graphics allocator services are stopped |
 | 2 | At `early-boot`, wait for `/dev/dri/card0`, start `vendor.msm_drm_quirks` |
 | 3 | It sets `vendor.qcom.soc.msm_drm.chip_id` and `.gpu_id` |
-| 4 | Adreno 5xx (id 500 to 599): `vendor.mesa.fd.mesa.debug=sysmem` |
-| 5 | Ids below 600: `vendor.minigbm.avoid_ubwc=true` |
-| 6 | When it stops, the allocator services are enabled again, so the allocator starts with the properties already set |
+| 4 | It sets `vendor.qcom.soc.msm_drm.gles_version`: ES 2.0 below id 300, 3.0 for 3xx, 3.2 from 400, the levels Mesa freedreno advertises. With `ro.hardware.egl=mesa`, `init.mainline.qcom.rc` copies it to `ro.opengles.version` |
+| 5 | Adreno 5xx (id 500 to 599): `vendor.mesa.fd.mesa.debug=sysmem` |
+| 6 | Ids below 600: `vendor.minigbm.avoid_ubwc=true` |
+| 7 | When it stops, the allocator services are enabled again, so the allocator starts with the properties already set |
 
 ## Troubleshooting
 

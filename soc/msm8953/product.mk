@@ -11,12 +11,6 @@ ifeq ($(filter sdm632,$(TARGET_QCOM_SOC)),)
 PRODUCT_VENDOR_PROPERTIES += bluetooth.le.disable_apcf_extended_features?=1
 endif
 
-# Graphics (Mesa)
-ifeq ($(TARGET_GRAPHICS),mesa)
-PRODUCT_VENDOR_PROPERTIES += \
-    ro.opengles.version=196609
-endif
-
 # Firmware
 PRODUCT_PACKAGES += \
     linux_firmware_qcom-a530

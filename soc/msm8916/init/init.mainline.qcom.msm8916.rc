@@ -3,10 +3,6 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-# Graphics (Mesa)
-on early-boot && property:ro.hardware.egl=mesa && property:vendor.qcom.soc.msm_drm.gpu_id=306
-    setprop ro.opengles.version 196608
-
 # Modem
 on early-boot && property:vendor.qcom.soc.machine=MSM8916
     setprop ro.vendor.qcom.soc.enable_modem_services 1

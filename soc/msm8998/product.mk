@@ -8,12 +8,6 @@
 PRODUCT_PACKAGES += \
     linux_firmware_qcom-a530
 
-# Graphics (Mesa)
-ifeq ($(TARGET_GRAPHICS),mesa)
-PRODUCT_VENDOR_PROPERTIES += \
-    ro.opengles.version=196609
-endif
-
 # Modem
 PRODUCT_PACKAGES += \
     rmtfs \

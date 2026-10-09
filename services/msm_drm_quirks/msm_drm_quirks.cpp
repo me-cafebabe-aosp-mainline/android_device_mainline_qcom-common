@@ -29,6 +29,19 @@ constexpr char kMinigbmAvoidUbwcProp[] = "vendor.minigbm.avoid_ubwc";
 
 const std::string kPropPrefix = "vendor.qcom.soc.msm_drm.";
 
+// Values of ro.opengles.version
+constexpr int kGlesVersion20 = 131072;
+constexpr int kGlesVersion30 = 196608;
+constexpr int kGlesVersion32 = 196610;
+
+// OpenGL ES version of Mesa freedreno on each Adreno series, as in
+// essl_feature_level of freedreno_screen.c
+int GetGlesVersion(uint64_t gpu_id) {
+    if (gpu_id >= 400) return kGlesVersion32;
+    if (gpu_id >= 300) return kGlesVersion30;
+    return kGlesVersion20;
+}
+
 int Work(struct fd_pipe* pipe) {
     uint64_t chip_id, gpu_id;
 
@@ -37,6 +50,9 @@ int Work(struct fd_pipe* pipe) {
     LOG(INFO) << "chip_id = " << std::to_string(chip_id) << " gpu_id = " << std::to_string(gpu_id);
     SetProperty(kPropPrefix + "chip_id", std::to_string(chip_id));
     SetProperty(kPropPrefix + "gpu_id", std::to_string(gpu_id));
+
+    // ro.opengles.version is set by init, see init.mainline.qcom.rc
+    SetProperty(kPropPrefix + "gles_version", std::to_string(GetGlesVersion(gpu_id)));
 
     // Adreno 5xx Mesa Freedreno quirks
     if (gpu_id >= 500 && gpu_id <= 599) {
