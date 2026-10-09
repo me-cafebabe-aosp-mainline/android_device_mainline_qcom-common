@@ -14,11 +14,9 @@
 #include <android-base/logging.h>
 #include <android-base/properties.h>
 
-#include <xf86drm.h>
+#include <android-base/unique_fd.h>
 
-extern "C" {
-#include <freedreno_drmif.h>
-}
+#include <xf86drm.h>
 
 using namespace android::base;
 
@@ -28,6 +26,33 @@ constexpr char kMesaFdMesaDebugProp[] = "vendor.mesa.fd.mesa.debug";
 constexpr char kMinigbmAvoidUbwcProp[] = "vendor.minigbm.avoid_ubwc";
 
 const std::string kPropPrefix = "vendor.qcom.soc.msm_drm.";
+
+// From msm_drm.h, which is not usable from C++ (member named "or").
+// libdrm_freedreno is not used because it refuses GPUs that report
+// MSM_PARAM_GPU_ID as 0, which is every Adreno that is only identified by
+// its chip ID.
+constexpr unsigned long kDrmMsmGetParam = 0x00;
+constexpr uint32_t kMsmPipe3d0 = 0x10;
+constexpr uint32_t kMsmParamGpuId = 0x01;
+constexpr uint32_t kMsmParamChipId = 0x03;
+
+struct MsmParam {
+    uint32_t pipe;
+    uint32_t param;
+    uint64_t value;
+    uint32_t len;
+    uint32_t pad;
+};
+
+bool GetMsmParam(int fd, uint32_t param, uint64_t* value) {
+    MsmParam get_param = {
+            .pipe = kMsmPipe3d0,
+            .param = param,
+    };
+    if (drmCommandWriteRead(fd, kDrmMsmGetParam, &get_param, sizeof(get_param))) return false;
+    *value = get_param.value;
+    return true;
+}
 
 // Values of ro.opengles.version
 constexpr int kGlesVersion20 = 131072;
@@ -42,11 +67,22 @@ int GetGlesVersion(uint64_t gpu_id) {
     return kGlesVersion20;
 }
 
-int Work(struct fd_pipe* pipe) {
-    uint64_t chip_id, gpu_id;
+int Work(int fd) {
+    uint64_t chip_id = 0, gpu_id = 0;
 
-    fd_pipe_get_param(pipe, FD_CHIP_ID, &chip_id);
-    fd_pipe_get_param(pipe, FD_GPU_ID, &gpu_id);
+    const bool have_chip_id = GetMsmParam(fd, kMsmParamChipId, &chip_id);
+    const bool have_gpu_id = GetMsmParam(fd, kMsmParamGpuId, &gpu_id);
+    if (!have_chip_id && !have_gpu_id) {
+        LOG(ERROR) << "Failed to get the GPU parameters";
+        return EXIT_SUCCESS;
+    }
+
+    // Same as fd_dev_gpu_id() in Mesa. Chip ID is 0xCCMMNNPP (core, major,
+    // minor, patch), and it has the speed bin in the upper 32 bits.
+    if (!gpu_id && (chip_id & UINT32_MAX)) {
+        gpu_id = ((chip_id >> 24) & 0xff) * 100 + ((chip_id >> 16) & 0xff) * 10 +
+                 ((chip_id >> 8) & 0xff);
+    }
     LOG(INFO) << "chip_id = " << std::to_string(chip_id) << " gpu_id = " << std::to_string(gpu_id);
     SetProperty(kPropPrefix + "chip_id", std::to_string(chip_id));
     SetProperty(kPropPrefix + "gpu_id", std::to_string(gpu_id));
@@ -88,37 +124,13 @@ int Work(struct fd_pipe* pipe) {
 }  // namespace
 
 int main(int, char* argv[]) {
-    struct fd_device* dev;
-    struct fd_pipe* pipe;
-    int fd, ret = EXIT_SUCCESS;
-
     InitLogging(argv, &KernelLogger);
 
-    fd = open("/dev/dri/card0", O_RDWR);
-    if (fd < 0) {
+    unique_fd fd(open("/dev/dri/card0", O_RDWR));
+    if (!fd.ok()) {
         LOG(ERROR) << "open() failed";
-        goto err_open;
+        return EXIT_SUCCESS;
     }
 
-    dev = fd_device_new(fd);
-    if (!dev) {
-        LOG(ERROR) << "fd_device_new() failed";
-        goto err_fd_device_new;
-    }
-
-    pipe = fd_pipe_new(dev, FD_PIPE_3D);
-    if (!pipe) {
-        LOG(ERROR) << "fd_pipe_new() failed";
-        goto err_fd_pipe_new;
-    }
-
-    ret = Work(pipe);
-
-    fd_pipe_del(pipe);
-err_fd_pipe_new:
-    fd_device_del(dev);
-err_fd_device_new:
-    close(fd);
-err_open:
-    return ret;
+    return Work(fd.get());
 }

@@ -38,7 +38,7 @@ The zap file goes where the device DTS `firmware-name` says. See
 ## `msm_drm_quirks`
 
 A small service for legacy families (`services/msm_drm_quirks`). It
-reads the GPU id through `libdrm_freedreno` and sets the OpenGL ES
+reads the GPU id with the `msm` DRM ioctls and sets the OpenGL ES
 version and the workaround properties that Mesa and minigbm need.
 
 | Step | What |
