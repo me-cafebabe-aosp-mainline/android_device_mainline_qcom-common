@@ -41,7 +41,6 @@ smallest example; `sm7150` shows more.
 | Section | Set |
 |---------|-----|
 | Firmware | `PRODUCT_PACKAGES` for GPU and common firmware |
-| Graphics | `ro.opengles.version` when `TARGET_GRAPHICS` is `mesa` |
 | Daemons | `rmtfs`, `tqftpserv`, `qrtr-cfg`. Set `ro.vendor.qcom.soc.enable_modem_services` only after the modem stack has been **tested on hardware** of the family ([MODEM_STACK.md](MODEM_STACK.md)) |
 | Init | `init.mainline.qcom.<family>.rc` if the SoC needs its own |
 | ADSP | `hexagonrpcd_*` packages for audio and sensors |

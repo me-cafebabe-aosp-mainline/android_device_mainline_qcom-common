@@ -14,7 +14,7 @@ the downstream vendor tree.
 | Gallium driver | `freedreno` (`BOARD_MESA3D_GALLIUM_DRIVERS`) |
 | Vulkan | `freedreno` Vulkan (`BOARD_MESA3D_VULKAN_DRIVERS`), **not** for legacy families |
 | minigbm platform | `msm` |
-| `ro.opengles.version` | Set in `soc/<family>/product.mk` when `TARGET_GRAPHICS` is `mesa`. Legacy families get it from `msm_drm_quirks` instead |
+| `ro.opengles.version` | `optional/mesa/product.mk` sets 3.2 when `TARGET_GRAPHICS` is `mesa`. Legacy families get it from `msm_drm_quirks` instead |
 | Display and allocator HALs | The common options; see the common [optional modules](../../common/docs/CHOOSING_OPTIONAL_MODULES.md) |
 
 ### Why no Vulkan on legacy families
