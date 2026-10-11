@@ -90,7 +90,7 @@ PRODUCT_SOONG_NAMESPACES += \
 
 # Time
 PRODUCT_PACKAGES += \
-    com.sony.timekeep.apex
+    com.sony.timekeep
 
 # Utilities
 PRODUCT_PACKAGES += \
