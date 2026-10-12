@@ -65,6 +65,9 @@ endif
 # Graphics HALs
 TARGET_GRAPHICS_ALLOCATOR_HAL ?= minigbm-upstream
 
+# Time
+TARGET_USES_TIMEKEEP ?= true
+
 ##### Inherits #####
 
 # Inherit from mainline/qcom-common-ext
