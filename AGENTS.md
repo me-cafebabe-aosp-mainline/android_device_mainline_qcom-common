@@ -19,7 +19,8 @@ in `soc/<family>/`; Qualcomm HALs and daemons live in
 
 ## Hard rules
 
-- Do not build, flash or run tests; the human does.
+- No Android build, flashing or test without asking the human first
+  (`hardware/mainline/common/docs/WORKFLOW.md`).
 - Do not search from the AOSP tree root.
 - Keep device specific values out of `soc/<family>/`.
 - Do not depend on `device/mainline/qcom-common-ext`.
