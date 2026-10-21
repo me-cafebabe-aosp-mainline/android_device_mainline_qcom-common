@@ -5,10 +5,12 @@
 
 #include <fcntl.h>
 #include <stdlib.h>
-#include <unistd.h>
 
-#include <cstring>
+#include <algorithm>
+#include <filesystem>
 #include <string>
+#include <string_view>
+#include <vector>
 
 #define LOG_TAG "msm_drm_quirks"
 #include <android-base/logging.h>
@@ -121,14 +123,49 @@ int Work(int fd) {
     return EXIT_SUCCESS;
 }
 
+// The msm DRM device is not necessarily card0, e.g. when another display
+// driver probes first, so look for it by driver name.
+unique_fd OpenMsmCard() {
+    namespace fs = std::filesystem;
+
+    std::error_code ec;
+    std::vector<fs::path> cards;
+    for (const auto& entry : fs::directory_iterator("/dev/dri", ec)) {
+        if (entry.path().filename().string().starts_with("card")) cards.push_back(entry.path());
+    }
+    if (ec) {
+        LOG(ERROR) << "Failed to list /dev/dri: " << ec.message();
+        return {};
+    }
+    std::sort(cards.begin(), cards.end());
+
+    for (const auto& card : cards) {
+        unique_fd fd(open(card.c_str(), O_RDWR | O_CLOEXEC));
+        if (!fd.ok()) {
+            PLOG(WARNING) << "open(" << card << ") failed";
+            continue;
+        }
+
+        drmVersionPtr version = drmGetVersion(fd.get());
+        if (!version) continue;
+        const bool is_msm = std::string_view(version->name, version->name_len) == "msm";
+        drmFreeVersion(version);
+        if (is_msm) {
+            LOG(INFO) << "Using " << card;
+            return fd;
+        }
+    }
+    return {};
+}
+
 }  // namespace
 
 int main(int, char* argv[]) {
     InitLogging(argv, &KernelLogger);
 
-    unique_fd fd(open("/dev/dri/card0", O_RDWR));
+    unique_fd fd = OpenMsmCard();
     if (!fd.ok()) {
-        LOG(ERROR) << "open() failed";
+        LOG(ERROR) << "No msm DRM device found";
         return EXIT_SUCCESS;
     }
 
