@@ -25,3 +25,6 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     rmtfs \
     rmtfs.rc
+
+PRODUCT_VENDOR_PROPERTIES += \
+    ro.vendor.qcom.soc.enable_modem_services=1

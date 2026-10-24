@@ -7,7 +7,3 @@
 on early-boot
     chown system system /sys/class/backlight/1a98000.dsi.0/brightness
     chown system system /sys/class/backlight/1a98000.dsi.0/max_brightness
-
-# Modem
-on early-boot && property:vendor.qcom.soc.machine=MSM8916
-    setprop ro.vendor.qcom.soc.enable_modem_services 1
