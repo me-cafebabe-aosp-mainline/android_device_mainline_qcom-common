@@ -30,7 +30,9 @@
 
 # Mountpoint
 /firmware						u:object_r:firmware_mnt_file:s0
+/firmware-modem						u:object_r:firmware_mnt_file:s0
 /(vendor|system/vendor)/firmware_mnt(/.*)?		u:object_r:firmware_mnt_file:s0
+/(vendor|system/vendor)/firmware-modem(/.*)?		u:object_r:firmware_mnt_file:s0
 
 # Persist
 /mnt/vendor/persist/WCNSS_qcom_wlan_nv.bin		u:object_r:wcnss_persist_file:s0

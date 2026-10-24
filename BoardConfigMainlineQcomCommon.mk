@@ -27,7 +27,8 @@ endif
 
 # Partitions
 BOARD_ROOT_EXTRA_SYMLINKS += \
-    /vendor/firmware_mnt:/firmware
+    /vendor/firmware_mnt:/firmware \
+    /vendor/firmware-modem:/firmware-modem
 
 # Platform
 TARGET_BOARD_PLATFORM := qcom

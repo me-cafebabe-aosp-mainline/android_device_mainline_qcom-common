@@ -43,6 +43,16 @@ mkdir {
     }),
 }
 
+mkdir {
+    name: "mainline_qcom-common_vendor_firmware-modem_mountpoint",
+    dir: "firmware-modem",
+    vendor: true,
+    enabled: select(soong_config_variable("mainline_qcom_common", "path_hardware_qcom_caf_common_is_absent"), {
+        true: true,
+        default: false,
+    }),
+}
+
 phony {
     name: "hexagonrpcd_common_phony",
     required: [

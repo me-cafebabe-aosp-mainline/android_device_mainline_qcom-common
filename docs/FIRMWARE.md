@@ -54,7 +54,9 @@ in `davinci_mainline`).
 | Mountpoint | Meaning |
 |------------|---------|
 | `/vendor/firmware_mnt` | Mountpoint of the device's **firmware partition** (modem and DSP images). Mount it; **never install files into it** |
+| `/vendor/firmware-modem` | Similar to above, necessary when the device has another partition mounting to the above mountpoint (e.g. Samsung MSM8916). |
 | `/firmware` | Root symlink to `/vendor/firmware_mnt` (set by `qcom-common`) |
+| `/firmware-modem` | Root symlink to `/vendor/firmware-modem` (set by `qcom-common`) |
 | `/vendor/dsp` | Mountpoint of the DSP partition |
 | `/mnt/vendor/persist` | Calibration data. `qcom-common` overlays it with a writable layer at `post-fs` |
 
