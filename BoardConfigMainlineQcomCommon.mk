@@ -25,6 +25,13 @@ ifneq ($(TARGET_QCOM_SOC_FAMILY_IS_LEGACY),true)
 BOARD_MESA3D_VULKAN_DRIVERS += freedreno
 endif
 
+# Kernel
+ifeq ($(TARGET_SUPPORTS_64_BIT_APPS),true)
+BOARD_KERNEL_IMAGE_NAME ?= Image.gz
+else
+BOARD_KERNEL_IMAGE_NAME ?= zImage
+endif
+
 # Partitions
 BOARD_ROOT_EXTRA_SYMLINKS += \
     /vendor/firmware_mnt:/firmware \
