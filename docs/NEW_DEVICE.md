@@ -7,6 +7,13 @@ DSP data. `qcom-common` does the rest.
 For the generic parts of a device tree, see the common
 [skeleton](../../common/docs/DEVICE_TREE_SKELETON.md).
 
+## Where to start
+
+| You are | Look at |
+|---------|---------|
+| Bringing up a new Qualcomm device | `device/qualcomm/qrd8937`: one device in one tree, so everything device specific is in one place |
+| Wanting to keep the phone's partition table | `device/samsung/ss8916`: the Android images are files in the Android directory on `userdata`, found by `generic_init`, and the rest is a normal device tree. See `vendor/mainline/services/generic_init/docs/README.md` |
+
 ## What you set
 
 | Item | Where | Notes |

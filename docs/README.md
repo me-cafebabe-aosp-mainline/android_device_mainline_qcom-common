@@ -48,6 +48,8 @@ mainline/common            shared by every mainline device
 | `device/xiaomi/mi710-mainline` | The same shape, with USB and recovery caveats |
 | `device/xiaomi/pyxis_mainline` | A thin device |
 | `device/xiaomi/mi89xx-mainline` | lk2nd boot, several devices and kernel forks in one tree |
+| `device/qualcomm/qrd8937` | A single device with no sharing: the best entry point for bringing up a new Qualcomm device |
+| `device/samsung/ss8916` | Android images as files on `userdata`, found by `generic_init`, while the rest follows a normal device tree setup |
 
 ## Component READMEs
 
