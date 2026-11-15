@@ -44,6 +44,7 @@ For the generic parts of a device tree, see the common
 | Recovery pixel format | `RGBX_8888` |
 | Time | `TimeKeep` package and its sepolicy |
 | Properties | `ro.soc.manufacturer`, `ro.vendor.qcom.soc.family`, Bluetooth profile defaults |
+| Wi-Fi on WCNSS families | No WPA3-SAE upgrade (`WcnssWifiOverlay`): `wcn36xx` has no management frame protection |
 
 ### Init
 

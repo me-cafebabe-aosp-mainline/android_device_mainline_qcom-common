@@ -28,3 +28,7 @@ PRODUCT_PACKAGES += \
 
 PRODUCT_VENDOR_PROPERTIES += \
     ro.vendor.qcom.soc.enable_modem_services=1
+
+# Wi-Fi
+PRODUCT_PACKAGES += \
+    WcnssWifiOverlay
