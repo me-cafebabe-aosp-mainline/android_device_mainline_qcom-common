@@ -27,3 +27,7 @@ PRODUCT_PACKAGES += \
 # QRTR
 PRODUCT_PACKAGES += \
     qrtr-cfg
+
+# Wi-Fi
+PRODUCT_PACKAGES += \
+    WcnssWifiOverlay
