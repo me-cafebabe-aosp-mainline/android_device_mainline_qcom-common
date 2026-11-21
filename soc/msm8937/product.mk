@@ -24,3 +24,7 @@ PRODUCT_PACKAGES += \
 # Init
 PRODUCT_PACKAGES += \
     init.mainline.qcom.msm8937.rc
+
+# Wi-Fi
+PRODUCT_PACKAGES += \
+    WcnssWifiOverlay
