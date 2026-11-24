@@ -18,7 +18,7 @@ on init
     start vendor.init-mainline-qcom-sh
 
 # Graphics (Mesa)
-on early-boot && property:ro.hardware.egl=mesa && property:vendor.qcom.soc.msm_drm.gles_version=*
+on property:ro.hardware.egl=mesa && property:vendor.qcom.soc.msm_drm.gles_version=*
     setprop ro.opengles.version ${vendor.qcom.soc.msm_drm.gles_version}
 
 # Block device symlinks
